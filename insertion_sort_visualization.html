@@ -93,49 +93,69 @@
         appendNumber(num, isLeftIn);
     }
 
-    // www.zhihu.com/question/31636244/answer/52835780
-    function sleep(time) {
-        return new Promise(resolve => setTimeout(resolve, time));
-    }
-
-    async function sort() {
+    function sort() {
         var intervalTime = 300;
-
-        // 更小的索引务必是第一个参数
-        function swap(i, j) {
-            // console.log("swap(" + (j - 1) + "," + j + ")");
-            var temp = queue.removeChild(list[i]);
-            temp = queue.replaceChild(temp, list[j - 1]);
-            queue.insertBefore(temp, list[i]);
+        var numlist = []
+        for (var i = 0; i < list.length; ++i) {
+            numlist.push([parseInt(list[i].innerHTML), 'red']);
         }
 
-        function colorize(i, color) {
-            list[i].style.backgroundColor = color;
+        function clone(arr) {
+            duplicata = [];
+            for (var i = 0; i < arr.length; ++i) {
+                duplicata.push(arr[i].slice(0));
+            }
+            return duplicata;
+        }
+
+        function swap(i, j) {
+            var temp = numlist[i];
+            numlist[i] = numlist[j];
+            numlist[j] = temp;
         }
 
         function less(i, j) {
-            // console.log("less(" + i + "," + j + ")");
-            return parseInt(list[i].innerHTML) < parseInt(list[j].innerHTML);
+            return numlist[i][0] < numlist[j][0];
         }
 
-        for (var i = 1; i < list.length; ++i) {
-            for(var k=0; k<i; ++k)
-                colorize(k, "grey");
-            await sleep(intervalTime);
-            colorize(i, "blue");
-            for (var j = i; j-1>=0 && less(j,j-1); --j) {
-                await sleep(intervalTime);
-                colorize(j-1, "red");
-                swap(j-1,j);
+        function render(numlist) {
+            queue.innerHTML = "";
+            for (var i = 0; i < numlist.length; ++i) {
+                var newli = document.createElement("li");
+                newli.innerHTML = numlist[i][0];
+                newli.style.height = numlist[i][0] + "%";
+                newli.style.position = "relative";
+                newli.style.top = (100 - numlist[i][0]) + "%";
+                newli.style.backgroundColor = numlist[i][1];
+                queue.appendChild(newli);
             }
-            await sleep(intervalTime);
-            colorize(j, "red");
         }
 
-        for (var i = 0; i < list.length; ++i)
-            colorize(i, "red");
-    }
+        var steps = [];
+        for (var i = 1; i < numlist.length; ++i) {
+            var j;
+            for (var k = 0; k < i; ++k) numlist[k][1] = "grey";
+            steps.push(clone(numlist));
+            numlist[i][1] = "blue";
+            steps.push(clone(numlist));
+            for (j = i; j > 0 && less(j, j - 1); --j) {
+                swap(j, j - 1);
+                numlist[j][1] = "red";
+                steps.push(clone(numlist));
+            }
+            numlist[j][1] = "red";
+        }
 
+        for (var i = 0; i < numlist.length; ++i) numlist[i][1] = "red";
+        steps.push(clone(numlist));
+
+        var step = 0;
+        var animation = setInterval(function () {
+            render(steps[step]);
+            ++step;
+            if (step > steps.length - 1) clearInterval(animation);
+        }, intervalTime);
+    }
 </script>
 
 <body>
