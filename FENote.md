@@ -60,6 +60,7 @@ Promise与EventListener的区别
 - 模块加载是同步的，也就是说，只有加载完成，才能执行后面的操作
 - 模块可以多次加载，但是只会在第一次加载时运行一次，然后运行结果就被缓存了，以后再加载，就直接读取缓存结果。要想让模块再次运行，必须清除缓存
 - 模块加载的顺序，按照其在代码中出现的顺序
+
 ```javascript
 // example.js
 var x = 5;
@@ -80,6 +81,7 @@ console.log(example.addX(1)); // 6
 #### AMD (Asynchronous Module Definition)
 - 异步加载模块，适合浏览器端
 - 使用`define()`定义模块；使用`require([module], callback)`加载模块
+
 ```HTML
 <!-- 加载require.js并加载主模块 -->
 <script src="js/require.js" data-main="js/main"></script>
@@ -110,6 +112,7 @@ require.config({
 　　　　}
 　　});
 ```
+
 ```javascript
 // 定义模块
 define(id?: String, dependencies?: String[], factory: Function|Object);
@@ -134,6 +137,7 @@ define(['dependenceModule'], function(dependenceModule) {
 
 #### UMD (Universal Module Definition)
 - 兼容commonJS和AMD
+
 ```javascript
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -158,10 +162,11 @@ define(['dependenceModule'], function(dependenceModule) {
         c: c
     }
 }));
-
 ```
+
 #### ES6
 - 使用`export`导出
+
 ```javascript
 //导出变量
 export var color = "red";
@@ -188,7 +193,9 @@ export default function(num1, num2) {
 }
 export { add as default };
 ```
+
 - 使用`import`导入
+
 ```javascript
 import { identifier1,identifier2 } from "./example.js"
 import { sum as add } from './example.js'
@@ -200,7 +207,6 @@ import sum from "./example.js";
 
 // 导入默认值和其他非默认模块
 import sum,{color} from "./example.js"
-
 ```
 
 #### Ref.
@@ -310,12 +316,18 @@ x & 0x1 == 1; // 是否为奇数
 
 ## OS, Network, etc.
 
+### - 进程、线程间通信
+#### 进程间通信
+信号、管道、消息队列、共享内存、Socket、RPC；同步机制（信号量、互斥锁、条件变量等）
+#### 线程间通信
+处理线程间的同步与互斥：锁、信号量
+
+
 ### - Event Loop
 - **MacroTasks**: script(整体代码), setTimeout, setInterval, setImmediate, I/O, UI rendering
 - **MicroTasks**: process.nextTick, Promises, Object.observe(废弃), MutationObserver
 #### 浏览器
 浏览器会不断从MacroTask队列中按顺序取MacroTask执行，每执行完一个MacroTask都会检查MicroTask队列是否为空（执行完一个MacroTask的具体标志是函数执行栈为空），如果不为空则会一次性执行完所有MicroTask。然后再进入下一个循环去MacroTask队列中取下一个MacroTask执行，以此类推。
-
 #### Node.js
 1. timers：执行setTimeout() 和 setInterval()中到期的callback。
 2. I/O callbacks：上一轮循环中有少数的I/Ocallback会被延迟到这一轮的这一阶段执行
@@ -467,7 +479,7 @@ Sec-WebSocket-Accept: fFBooB7FAkLlXgRSz0BT3v4hq5s=
 Sec-WebSocket-Location: ws://example.com/
 ```
 - `Sec-WebSocket-Key`是浏览器随机生成的的字符串，服务器端会把`Sec-WebSocket-Key`加上一个特殊字符串`258EAFA5-E914-47DA-95CA-C5AB0DC85B11`后计算SHA-1摘要，之后进行BASE-64编码，将结果做为`Sec-WebSocket-Accept`头的值，返回给客户端。如此操作，可以尽量避免普通HTTP请求被误认为Websocket协议。
-- Sec-WebSocket-Version 表示支持的Websocket版本。RFC6455要求使用的版本是13，之前草案的版本均应当弃用。
+- `Sec-WebSocket-Version` 表示支持的Websocket版本。RFC6455要求使用的版本是13，之前草案的版本均应当弃用。
 
 ### WebSocket的替代方案
 #### 基于 Adobe Flash 实现的 WebSocket（[web-socket-js](https://github.com/gimite/web-socket-js)）
@@ -482,6 +494,32 @@ Sec-WebSocket-Location: ws://example.com/
 - [Comet (programming) - Wikipedia](https://en.wikipedia.org/wiki/Comet_(programming))
 - [实时Web的发展与实践](http://www.infoq.com/cn/articles/JavaScript-Web/)
 - [使用xhr-multipart方式实现comet](https://cnodejs.org/topic/4f16442ccae1f4aa270010af)
+
+### 常用正则表达式
+```
+// 匹配.js而不匹配.min.js
+(?<!\.min)(\.js)$
+// http://blog.sina.com.cn/s/blog_12e4623a90101cqy0.html （（正向）零宽断言 & 负向零宽断言）
+
+^(?!.+\.min.js$).+\.js$    // https://www.zhihu.com/question/55199619/answer/143272684
+
+// 邮箱
+^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$
+
+// 千位分隔符
+function commafy(num) {
+      return num && num
+          .toString()
+          .replace(/(\d)(?=(\d{3})+\.)/g, function($0, $1) {
+              return $1 + ",";
+          });
+}
+
+// 网址
+
+
+
+```
 
 ### Git中fetch与pull的区别
 - fetch将远程分支的最新内容拉取到本地，并将`FETCH_HEAD`指向此分支
