@@ -26,6 +26,7 @@ javascript是单线程执行的，也就是无法同时执行多段代码，当�
 - 解构赋值
 - 箭头函数
 - 块级作用域（let）
+- [let与const](https://www.tuicool.com/articles/ueM3Mvr)
 - class定义类
 - 模块化
 - Promise
@@ -46,7 +47,7 @@ Promise与EventListener的区别
 - 显式绑定：`bind()`、`apply()`、`call()`
 - new绑定：
   1. 构造一个新的对象
-  2. 这个新对象会被执行[[prototype]]链接
+  2. 这个新对象会被执行`[[prototype]]`链接
   3. 函数调用的this会绑定到这个新对象上
   4. 如果函数没有返回其他对象，那么new表达式中的函数调用会自动返回这个新的对象
 - 箭头函数中的this：封闭执行上下文的this值（根据定义时所在的执行上下文决定） 
@@ -338,18 +339,18 @@ x & 0x1 == 1; // 是否为奇数
 
 
 ### - HTTP版本演化
-#### HTTP 1.0
+#### HTTP/1.0
 - 新增`HEAD`、`POST`方法
 - Persistent Connection: 支持长连接，但默认还是使用短连接（`Connection: Keep-Alive`）
 - 支持缓存机制（`Pragma`、`Expires`）
 - 增加Host域指定主机名
 - 增加`Content-Range`域，允许只请求资源的某个部分（实现断点续传）
-#### HTTP 1.1
+#### HTTP/1.1
 - 新增`OPTIONS`、`PUT`、`DELETE`、`TRACE`、`CONNECT`方法
 - 默认长连接（除非特别声明 `Connection: close`）
 - 请求管道化（pipelining）：避免客户端队首阻塞（head of line blocking，下一个请求必须在前一个请求响应到达后发送）
 - 新增`Cache-Control`域
-#### HTTP 2.0
+#### HTTP/2.0
 - 多路复用，新增二进制分帧层，消息分帧后可以乱序发送，然后再根据每个帧头部的流标识符重新组装（**一个连接上可以同时有多个数据流**）
 - 头部压缩：使用HPACK压缩算法，同时通信双方各维护一份header fields表，避免重复头信息传输
 - 服务器推送
@@ -357,6 +358,16 @@ x & 0x1 == 1; // 是否为奇数
 - [HTTP/2 简介 | Web | Google Developers](https://developers.google.com/web/fundamentals/performance/http2/)
 - [HTTP1.0 HTTP1.1 HTTP2.0 主要特性对比 - 前端碎碎念 - SegmentFault 思否](https://segmentfault.com/a/1190000013028798)
 - [面试时如何优雅的谈论HTTP／1.0／1.1／2.0 - 简书](https://www.jianshu.com/p/52d86558ca57)
+
+### - `GET`、`POST`以及`PUT`的区别
+- https://www.zhihu.com/question/28586791/answer/145424285
+- RFC7231里定义了HTTP方法的几个性质：
+    1. 安全（Safe）：如果一个方法的语义在本质上是「只读」的，那么这个方法就是安全的。客户端向服务端的资源发起的请求如果使用了是安全的方法，就不应该引起服务端任何的状态变化，因此也是无害的。 此RFC定义，GET, HEAD, OPTIONS 和 TRACE 这几个方法是安全的。
+    2. 幂等（Idempotent）：指同一个请求方法执行多次和仅执行一次的效果完全相同。按照RFC规范，PUT，DELETE和安全方法都是幂等的。POST语义不是幂等的，这也是浏览器在后退/刷新时遇到POST会给用户提示的原因：重复请求可能会带来意想不到的后果。
+    3. 可缓存性（Cacheable）：顾名思义就是一个方法是否可以被缓存，此RFC里GET，HEAD和某些情况下的POST都是可缓存的，但是绝大多数的浏览器的实现里仅仅支持GET和HEAD。
+- [RFC2616](https://tools.ietf.org/html/rfc2616#section-9.6)：
+    + 「The PUT method requests that the enclosed entity be stored under the supplied Request-URI. If the Request-URI refers to an **already existing** resource, the enclosed entity SHOULD be considered as a **modified version of the one residing on the origin server**. If the Request-URI does not point to an existing resource, and that URI is capable of being defined as a new resource by the requesting user agent, the origin server can create the resource with that URI.」
+- 因此`GET`方法是安全、幂等、可缓存的，`POST`不安全，不幂等，（大部分实现）不可缓存，`PUT`不安全、幂等、不可缓存。
 
 
 ### - HTTP状态码
