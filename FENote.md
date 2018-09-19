@@ -39,6 +39,11 @@ Promise与EventListener的区别
 
 - Promise 构造函数包含一个参数和一个带有 resolve（解析）和 reject（拒绝）两个参数的回调
 - 若在then()中返回一个值，则以该值调用下一个then()；若返回一个Promise，下一个then()则等待其产生结果后调用。因此可以实现链式调用，避免回调嵌套
+
+#### Promise 实现
+- resolve 与 reject： 修改状态，保存值，执行回调队列
+- then： 根据不同的状态以及返回值的类型，返回一个新的 Promise。若还处于 pending 状态，则先放入队列
+
 #### Ref.
 
 ### - JavaScript中this的指向
@@ -299,6 +304,12 @@ Formatting context是页面中的一块渲染区域，并且有一套渲染规�
 - `overflow`不为`visible`的块元素
 - `display`为`table-cell`, `table-caption`, `flex`, `inline-flex`...
 
+### - 选择器
+- 标签选择符记 1 分
+- 类选择符记 10 分
+- ID选择符记 100 分
+- 行内样式记 1000 分
+
 ## Algorithm
 
 ### - 完全二叉树以及树的度
@@ -337,6 +348,10 @@ x & 0x1 == 1; // 是否为奇数
 5. check：执行setImmediate的callback
 6. close callbacks：执行close事件的callback，例如socket.on(“close”,func)
 
+### 各种网络协议
+- Simple Network Management Protocol (SNMP): 简单网络管理协议，基于 UDP/IP/ARP 协议
+- Trivial File Transfer Protocol (TFTP): 简单文件传输协议，基于 UDP
+- 网络层协议： IP、ICMP 
 
 ### - HTTP版本演化
 #### HTTP/1.0
